@@ -1,0 +1,24 @@
+---
+- name: Copy file instances.yml to remote
+  copy:
+    src: "files/instances.yml"
+    dest: "/tmp/instances.yml"
+
+- name: Generate CA and certificates
+  command: /usr/share/elasticsearch/bin/elasticsearch-certutil cert --pem --self-signed --silent -out /tmp/certs.zip --in /tmp/instances.yml
+  args:
+    creates: /tmp/certs.zip
+
+- name: Download CA and certificates
+  fetch:
+    src: "/tmp/certs.zip"
+    dest: "{{ output_artifacts_path }}/certs.zip"
+    flat: true
+
+- name: Remove files used to generate certificates
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  loop:
+    - certs.zip
+    - instances.yml

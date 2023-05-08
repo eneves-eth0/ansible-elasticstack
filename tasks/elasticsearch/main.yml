@@ -1,0 +1,101 @@
+---
+- name: Add Key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+- name: Configure repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/8.x/apt stable main"
+    filename: elastic-8.x.list
+    update_cache: true
+    state: present
+
+- name: Install elasticsearch
+  apt:
+    name: elasticsearch
+    state: present
+
+- name: Config elasticsearch.yml
+  template:
+    src: templates/elasticsearch.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: elasticsearch
+    group: elasticsearch
+
+- name: Config jvm.options
+  template:
+    src: templates/jvm.options.j2
+    dest: /etc/elasticsearch/jvm.options.d/jvm.options
+    owner: elasticsearch
+    group: elasticsearch
+
+- name: Create the data and log directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+  loop:
+    - "{{ path_data }}"
+    - "{{ path_logs }}"
+
+- name: Ensures /etc/systemd/system/elasticsearch.service.d/ dir exists
+  file:
+    path: /etc/systemd/system/elasticsearch.service.d
+    state: directory
+
+- name: Sync override.conf file
+  copy:
+    src: "files/override.conf"
+    dest: "/etc/systemd/system/elasticsearch.service.d/override.conf"
+
+- name: Open port on firewall
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - 9200
+    - 9300
+
+#- name: "Check if {{ output_artifacts_path }}/certs.zip exists"
+#  delegate_to: localhost
+#  stat:
+#    path: "{{ output_artifacts_path }}/certs.zip"
+#  register: fileExists
+
+- import_tasks: ca_and_certificates.yml
+  run_once: true
+#  when:
+#   - inventory_hostname == groups['all']|first
+#   - not fileExists.stat.exists
+
+- name: Create /etc/elasticsearch/certs dir
+  file:
+    path: /etc/elasticsearch/certs
+    group: elasticsearch
+    state: directory
+
+- name: Extract files
+  unarchive:
+    src: "{{ output_artifacts_path }}/certs.zip"
+    dest: "/etc/elasticsearch/certs"
+    group: elasticsearch
+    creates: /etc/elasticsearch/certs/ca/ca.crt
+
+- name: Start elasticsearch on system boot and reload daemon
+  systemd:
+    name: elasticsearch
+    daemon_reload: yes
+    enabled: yes
+
+- name: Start elasticsearch
+  systemd:
+    state: started
+    name: elasticsearch
+
+- import_tasks: generate_password.yml
+  run_once: true
+  when:
+    - inventory_hostname == groups['all']|first

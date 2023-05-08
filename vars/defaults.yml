@@ -1,0 +1,5 @@
+elasticsearch:
+  repository_url: https://artifacts.elastic.co/downloads/elasticsearch
+  package: elasticsearch-8.7.1-linux-x86_64.tar.gz
+os:
+  locale: en_US.utf8

@@ -1,0 +1,27 @@
+---
+- name: Set locale
+  shell:
+    cmd: "update-locale LANG={{ os.locale }} && export LC_ALL={{ os.locale }}"
+
+- name: Disable swap
+  shell:
+    cmd: swapoff -a
+  changed_when: ansible_swaptotal_mb != 0
+
+- name: Persist swap disabled in /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: ^([^#].*?\sswap\s+sw\s+.*)$
+    replace: '#\1'
+
+- name: Limit number of IPV4 packet sending retries
+  sysctl:
+    name: net.ipv4.tcp_retries2
+    value: 5
+    sysctl_set: true
+    reload: true
+
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present

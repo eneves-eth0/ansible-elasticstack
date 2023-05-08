@@ -1,0 +1,73 @@
+# Arquivo de amostra. Substitua conforme documentação.
+instances:
+  - name: master1
+    dns:
+      - localhost
+      - master1.elastic.domain
+    ip:
+      - 127.0.0.1
+      - 10.135.0.2
+  - name: master2
+    dns:
+      - localhost
+      - master2.elastic.domain
+    ip:
+      - 127.0.0.1
+      - 10.135.0.3
+#  - name: master3
+#    dns:
+#      - localhost
+#      - master3.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.25
+#  - name: ingest1
+#    dns:
+#      - localhost
+#      - ingest1.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.26
+#  - name: ingest2
+#    dns:
+#      - localhost
+#      - ingest1.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.27
+#  - name: ingest3
+#    dns:
+#      - localhost
+#      - ingest1.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.28
+#  - name: data1
+#    dns:
+#      - localhost
+#      - data1.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.29
+#  - name: data2
+#    dns:
+#      - localhost
+#      - data1.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.30
+#  - name: data3
+#    dns:
+#      - localhost
+#      - data1.elastic.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.31
+#  - name: kibana
+#    dns:
+#      - localhost
+#      - kibana.domain
+#    ip:
+#      - 127.0.0.1
+#      - 192.168.1.41
+#

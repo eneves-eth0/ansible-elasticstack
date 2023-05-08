@@ -1,0 +1,16 @@
+---
+- hosts: all
+  remote_user: root
+  become: false
+  vars:
+    cluster_name: elastic-cluster
+    path_data: /elastic/data
+    path_logs: /elastic/logs
+    output_artifacts_path: ./output
+  vars_files:
+    - vars/defaults.yml
+
+  tasks:
+    - import_tasks: tasks/prepare_os.yml
+    - import_tasks: tasks/elasticsearch/main.yml
+
